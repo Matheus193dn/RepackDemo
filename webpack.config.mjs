@@ -161,6 +161,7 @@ export default env => {
             /node_modules(.*[/\\])+metro/,
             /node_modules(.*[/\\])+abort-controller/,
             /node_modules(.*[/\\])+@callstack[/\\]repack/,
+            /node_modules(.*[/\\])+react-freeze/,
           ],
           use: 'babel-loader',
         },
@@ -232,16 +233,25 @@ export default env => {
           sourceMapFilename,
           assetsPath,
         },
+        extraChunks: [
+          {
+            include: 'src_screens_AuthScreen_tsx',
+            type: 'remote',
+            outputPath: path.join('build/output', platform, 'remote'),
+          },
+        ],
       }),
       new Repack.plugins.ModuleFederationPlugin({
         name: 'host',
         shared: {
           react: {
-            ...Repack.Federated.SHARED_REACT,
+            singleton: true,
+            eager: true,
             requiredVersion: '18.2.0',
           },
           'react-native': {
-            ...Repack.Federated.SHARED_REACT_NATIVE,
+            singleton: true,
+            eager: true,
             requiredVersion: '0.74.1',
           },
         },

@@ -1,4 +1,5 @@
 {
   "name": "RepackDemo",
-  "displayName": "RepackDemo"
+  "displayName": "RepackDemo",
+  "AuthApp": ["src_screens_AuthScreen_tsx"]
 }

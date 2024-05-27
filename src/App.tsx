@@ -5,7 +5,7 @@
  * @format
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {
   SafeAreaView,
@@ -13,9 +13,11 @@ import {
   StatusBar,
   StyleSheet,
   Text,
+  TouchableOpacity,
   useColorScheme,
   View,
 } from 'react-native';
+import RNFS from 'react-native-fs';
 
 import {
   Colors,
@@ -24,6 +26,7 @@ import {
   LearnMoreLinks,
   ReloadInstructions,
 } from 'react-native/Libraries/NewAppScreen';
+import AuthScreen from './screens/AuthScreen';
 
 type SectionProps = PropsWithChildren<{
   title: string;
@@ -57,10 +60,23 @@ function Section({children, title}: SectionProps): React.JSX.Element {
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
+  const [isRemoteBundle, setIsRemoteBundle] = useState<boolean>(false);
 
   const backgroundStyle = {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
+
+  // return <AuthScreen />;
+
+  const getFileContent = async (path: any) => {
+    const reader = await RNFS.readDir(path);
+    console.log('===reader: ', JSON.stringify(reader));
+  };
+  useEffect(() => {
+    getFileContent(`${RNFS.DocumentDirectoryPath}/scripts`); //run the function on the first render.
+  }, []);
+
+  if (isRemoteBundle) return <AuthScreen />;
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -76,6 +92,11 @@ function App(): React.JSX.Element {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
+          <TouchableOpacity
+            style={{backgroundColor: 'red'}}
+            onPress={() => setIsRemoteBundle(!isRemoteBundle)}>
+            <Text>Show Remote Bundle</Text>
+          </TouchableOpacity>
           <Section title="Step One">
             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
             screen and then come back to see your edits.
