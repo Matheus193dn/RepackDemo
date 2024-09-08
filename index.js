@@ -7,22 +7,40 @@ import {ScriptManager, Federated, Script} from '@callstack/repack/client';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import App from './src/App';
-import {name as appName, AuthApp} from './app.json';
+import {name as appName} from './app.json';
+import getContainersURL from './src/utils/getContainersURL';
 
 ScriptManager.shared.setStorage(AsyncStorage);
 
-const resolveURL = Federated.createURLResolver({
-  containers: {
-    AuthApp: 'http://127.0.0.1:9000/[name][ext]',
-  },
-});
-
 ScriptManager.shared.addResolver(async (scriptId, caller) => {
   let url;
-  if (caller === 'main') {
-    url = Script.getDevServerURL(scriptId);
-  } else {
-    url = resolveURL(scriptId, caller);
+  try {
+    const containersURL = getContainersURL({
+      platform: Platform.OS,
+      appName: 'AuthApp',
+    });
+    console.log('containersURL===: ', containersURL);
+
+    // const containersResponse = await axios.get(containersURL);
+    const containersResponse = await fetch(containersURL);
+    console.log('containersResponse===: ', containersResponse);
+
+    const containers = await containersResponse.json();
+    console.log('containers===: ', containers);
+
+    const resolveURL = Federated.createURLResolver({
+      containers,
+    });
+
+    console.log('resolveURL===: ', containersResponse);
+
+    if (__DEV__ && caller === 'main') {
+      url = Script.getDevServerURL(scriptId);
+    } else {
+      url = resolveURL(scriptId, caller);
+    }
+  } catch (error) {
+    console.log('error==: ', error);
   }
 
   if (!url) {
@@ -31,10 +49,11 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 
   return {
     url,
-    cache: false, // For development
+    cache: !__DEV__,
     query: {
       platform: Platform.OS,
     },
+    // verifyScriptSignature: __DEV__ ? 'off' : 'strict',
   };
 });
 

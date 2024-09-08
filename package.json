@@ -12,7 +12,8 @@
   },
   "dependencies": {
     "react": "18.2.0",
-    "react-native": "0.74.1"
+    "react-native": "0.74.1",
+    "react-native-permissions": "^4.1.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -53,6 +54,5 @@
       "json",
       "node"
     ]
-  },
-  "packageManager": "pnpm@9.1.0"
+  }
 }
