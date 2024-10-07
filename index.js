@@ -34,8 +34,15 @@ ScriptManager.shared.addResolver(async (scriptId, caller) => {
 
     console.log('resolveURL===: ', containersResponse);
 
-    if (__DEV__ && caller === 'main') {
-      url = Script.getDevServerURL(scriptId);
+    if (__DEV__) {
+      const resolveURL = Federated.createURLResolver({
+        containers: {
+          AuthApp: `https://server-repack-demo.onrender.com/AuthApp/${Platform.OS}/remotes/[name][ext]`,
+          WeatherApp: 'http://localhost:9002/[name][ext]',
+          TheMoviesApp: 'http://localhost:9003/[name][ext]',
+        },
+      });
+      url = resolveURL(scriptId, caller);
     } else {
       url = resolveURL(scriptId, caller);
     }

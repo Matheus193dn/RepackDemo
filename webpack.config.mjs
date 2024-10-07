@@ -239,6 +239,16 @@ export default env => {
             type: 'remote',
             outputPath: path.join('build/output', platform, 'remote'),
           },
+          {
+            include: 'src_screens_WeatherScreen_tsx',
+            type: 'remote',
+            outputPath: path.join('build/output', platform, 'remote'),
+          },
+          {
+            include: 'src_screens_MoviesScreen_tsx',
+            type: 'remote',
+            outputPath: path.join('build/output', platform, 'remote'),
+          },
         ],
       }),
       new Repack.plugins.ModuleFederationPlugin({
